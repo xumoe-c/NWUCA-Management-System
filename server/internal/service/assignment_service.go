@@ -42,7 +42,7 @@ func (s *assignmentServiceImpl) CreateAssignment(req CreateAssignmentRequest) (*
 		DepartmentID: req.DepartmentID,
 		PositionID:   req.PositionID,
 		StartDate:    req.StartDate,
-		EndDate:      req.EndDate,
+		EndDate:      *req.EndDate,
 	}
 	err := s.repo.Create(assignment)
 	return assignment, err
@@ -67,7 +67,7 @@ func (s *assignmentServiceImpl) UpdateAssignment(id uint, req UpdateAssignmentRe
 	if !req.StartDate.IsZero() {
 		assignment.StartDate = req.StartDate
 	}
-	assignment.EndDate = req.EndDate // 允许将 EndDate 更新为 nil
+	assignment.EndDate = *req.EndDate // 允许将 EndDate 更新为 nil
 
 	err = s.repo.Update(assignment)
 	return assignment, err
