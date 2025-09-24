@@ -6,6 +6,7 @@ import (
 	"NWUCA-Management-System/server/internal/util/auth"
 	"errors"
 
+	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -69,6 +70,13 @@ func (s *userServiceImpl) Register(username, email, password string) (*model.Use
 
 // Login 实现了用户登录的业务逻辑
 func (s *userServiceImpl) Login(email, password string) (string, error) {
+	// WARNING: 调试环境使用，生产环境请删除！
+	if email == viper.GetString("admin_email") {
+		if password == viper.GetString("admin_password") {
+			return auth.GenerateToken(1, "admin", s.jwtSecret, s.jwtExpDays)
+		}
+	}
+
 	// 1. 根据邮箱查找用户
 	user, err := s.userRepo.FindByEmail(email)
 	if err != nil {

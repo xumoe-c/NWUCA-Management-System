@@ -8,9 +8,30 @@ import (
 	"NWUCA-Management-System/server/internal/service"
 	"log"
 
+	_ "NWUCA-Management-System/server/docs" // 导入 docs
+
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title NWUCA Management System API
+// @version 1.0
+// @description This is the API documentation for the NWUCA Management System.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /api/v1
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	// 1. 加载配置
 	cfg, err := config.LoadConfig()
@@ -48,6 +69,9 @@ func main() {
 
 	// 4. 初始化 Gin 引擎
 	r := gin.Default()
+
+	// Swagger 路由
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// 5. 注册路由
 	apiV1 := r.Group("/api/v1")

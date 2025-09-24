@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"NWUCA-Management-System/server/internal/dto"
 	"NWUCA-Management-System/server/internal/service"
 	"net/http"
 
@@ -17,22 +18,19 @@ func NewUserHandler(svc service.UserService) *UserHandler {
 	return &UserHandler{userService: svc}
 }
 
-// RegisterRequest 定义了注册请求的 JSON 结构
-type RegisterRequest struct {
-	Username string `json:"username" binding:"required"`
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=8"`
-}
-
-// LoginRequest 定义了登录请求的 JSON 结构
-type LoginRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
-}
-
-// Register 处理用户注册请求
+// Register
+// @Summary Register a new user
+// @Description Register a new user with username, email, and password
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param   user     body    dto.RegisterRequest     true        "User registration info"
+// @Success 201 {object} dto.UserResponse "User registered successfully"
+// @Failure 400 {object} dto.ErrorResponse "Invalid request body"
+// @Failure 500 {object} dto.ErrorResponse "Failed to register user"
+// @Router /register [post]
 func (h *UserHandler) Register(c *gin.Context) {
-	var req RegisterRequest
+	var req dto.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -44,15 +42,25 @@ func (h *UserHandler) Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "User registered successfully",
-		"user_id": createdUser.ID,
+	c.JSON(http.StatusCreated, dto.UserResponse{
+		Message: "User registered successfully",
+		UserID:  createdUser.ID,
 	})
 }
 
-// Login 处理用户登录请求
+// Login
+// @Summary Log in a user
+// @Description Log in a user with email and password
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Param   user     body    dto.LoginRequest     true        "User login info"
+// @Success 200 {object} dto.LoginResponse "Login successful"
+// @Failure 400 {object} dto.ErrorResponse "Invalid request body"
+// @Failure 401 {object} dto.ErrorResponse "Unauthorized"
+// @Router /login [post]
 func (h *UserHandler) Login(c *gin.Context) {
-	var req LoginRequest
+	var req dto.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -64,5 +72,5 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, dto.LoginResponse{Token: token})
 }

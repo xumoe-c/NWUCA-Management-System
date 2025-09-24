@@ -1,0 +1,1265 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the API documentation for the NWUCA Management System.",
+        "title": "NWUCA Management System API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/assignments": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a list of all assignments",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assignments"
+                ],
+                "summary": "Get all assignments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Assignment"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to get assignments",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new assignment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assignments"
+                ],
+                "summary": "Create a new assignment",
+                "parameters": [
+                    {
+                        "description": "Assignment creation info",
+                        "name": "assignment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateAssignmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Assignment"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to create assignment",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/assignments/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update an existing assignment by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assignments"
+                ],
+                "summary": "Update an existing assignment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Assignment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Assignment update info",
+                        "name": "assignment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateAssignmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Assignment"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to update assignment",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete an assignment by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "assignments"
+                ],
+                "summary": "Delete an assignment",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Assignment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Invalid assignment ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to delete assignment",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/departments": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a list of all departments",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Get all departments",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Department"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to get departments",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new department",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Create a new department",
+                "parameters": [
+                    {
+                        "description": "Department creation info",
+                        "name": "department",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateDepartmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Department"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to create department",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/departments/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update an existing department by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Update an existing department",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Department ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Department update info",
+                        "name": "department",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateDepartmentRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Department"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to update department",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a department by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "departments"
+                ],
+                "summary": "Delete a department",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Department ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Invalid department ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to delete department",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Log in a user with email and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Log in a user",
+                "parameters": [
+                    {
+                        "description": "User login info",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/members": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a list of all members",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "members"
+                ],
+                "summary": "Get all members",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Member"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to get members",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new member",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "members"
+                ],
+                "summary": "Create a new member",
+                "parameters": [
+                    {
+                        "description": "Member creation info",
+                        "name": "member",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateMemberRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Member"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to create member",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/members/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update an existing member by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "members"
+                ],
+                "summary": "Update an existing member",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Member ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Member update info",
+                        "name": "member",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateMemberRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Member"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to update member",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a member by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "members"
+                ],
+                "summary": "Delete a member",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Member ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Invalid member ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to delete member",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/positions": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get a list of all positions",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "positions"
+                ],
+                "summary": "Get all positions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.Position"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to get positions",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new position",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "positions"
+                ],
+                "summary": "Create a new position",
+                "parameters": [
+                    {
+                        "description": "Position creation info",
+                        "name": "position",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreatePositionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.Position"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to create position",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/positions/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update an existing position by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "positions"
+                ],
+                "summary": "Update an existing position",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Position ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Position update info",
+                        "name": "position",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdatePositionRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.Position"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to update position",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a position by ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "positions"
+                ],
+                "summary": "Delete a position",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Position ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Invalid position ID",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to delete position",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "Register a new user with username, email, and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User registration info",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to register user",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.CreateAssignmentRequest": {
+            "type": "object",
+            "required": [
+                "created_by",
+                "title"
+            ],
+            "properties": {
+                "assignee_id": {
+                    "type": "integer"
+                },
+                "created_by": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateDepartmentRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateMemberRequest": {
+            "type": "object",
+            "required": [
+                "department_id",
+                "email",
+                "join_date",
+                "name",
+                "position_id"
+            ],
+            "properties": {
+                "department_id": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "join_date": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "position_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.CreatePositionRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateAssignmentRequest": {
+            "type": "object",
+            "properties": {
+                "assignee_id": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateDepartmentRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdateMemberRequest": {
+            "type": "object",
+            "properties": {
+                "department_id": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "join_date": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "position_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.UpdatePositionRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UserResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Assignment": {
+            "type": "object",
+            "properties": {
+                "assignee": {
+                    "$ref": "#/definitions/model.Member"
+                },
+                "assigneeID": {
+                    "description": "被分配任务的成员ID",
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "description": "创建任务的用户ID",
+                    "type": "integer"
+                },
+                "creator": {
+                    "$ref": "#/definitions/model.User"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "departmentID": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "positionID": {
+                    "type": "integer"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "状态: pending, in_progress, completed",
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Department": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Department"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parent": {
+                    "$ref": "#/definitions/model.Department"
+                },
+                "parentID": {
+                    "description": "支持层级结构 (父部门ID)，指针类型以允许为NULL",
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Member": {
+            "type": "object",
+            "properties": {
+                "assignments": {
+                    "description": "一个会员可以有多个任期分配",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Assignment"
+                    }
+                },
+                "avatarURL": {
+                    "type": "string"
+                },
+                "college": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "departmentID": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "expectedGraduationDate": {
+                    "type": "string"
+                },
+                "grade": {
+                    "description": "年级，如 \"2022级\"",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "joinDate": {
+                    "type": "string"
+                },
+                "major": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phoneNumber": {
+                    "type": "string"
+                },
+                "positionID": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "状态: active, graduated, inactive",
+                    "type": "string"
+                },
+                "studentID": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "description": "关联用户表",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    ]
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Position": {
+            "type": "object",
+            "properties": {
+                "accessLevel": {
+                    "description": "权限等级，数字越大权限越高",
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "如 \"会长\", \"部长\", \"部员\"",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "role": {
+                    "description": "角色 (e.g., 'admin', 'member')",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

@@ -1,31 +1,16 @@
 package service
 
 import (
+	"NWUCA-Management-System/server/internal/dto"
 	"NWUCA-Management-System/server/internal/model"
 	"NWUCA-Management-System/server/internal/repository"
-	"time"
 )
 
 type AssignmentService interface {
-	CreateAssignment(req CreateAssignmentRequest) (*model.Assignment, error)
+	CreateAssignment(req dto.CreateAssignmentRequest) (*model.Assignment, error)
 	GetAllAssignments() ([]model.Assignment, error)
-	UpdateAssignment(id uint, req UpdateAssignmentRequest) (*model.Assignment, error)
+	UpdateAssignment(id uint, req dto.UpdateAssignmentRequest) (*model.Assignment, error)
 	DeleteAssignment(id uint) error
-}
-
-type CreateAssignmentRequest struct {
-	MemberID     uint       `json:"member_id" binding:"required"`
-	DepartmentID uint       `json:"department_id" binding:"required"`
-	PositionID   uint       `json:"position_id" binding:"required"`
-	StartDate    time.Time  `json:"start_date" binding:"required"`
-	EndDate      *time.Time `json:"end_date"` // 使用指针以允许为空
-}
-
-type UpdateAssignmentRequest struct {
-	DepartmentID uint       `json:"department_id"`
-	PositionID   uint       `json:"position_id"`
-	StartDate    time.Time  `json:"start_date"`
-	EndDate      *time.Time `json:"end_date"`
 }
 
 type assignmentServiceImpl struct {
@@ -36,13 +21,13 @@ func NewAssignmentService(repo repository.AssignmentRepository) AssignmentServic
 	return &assignmentServiceImpl{repo: repo}
 }
 
-func (s *assignmentServiceImpl) CreateAssignment(req CreateAssignmentRequest) (*model.Assignment, error) {
+func (s *assignmentServiceImpl) CreateAssignment(req dto.CreateAssignmentRequest) (*model.Assignment, error) {
 	assignment := &model.Assignment{
-		MemberID:     req.MemberID,
-		DepartmentID: req.DepartmentID,
-		PositionID:   req.PositionID,
-		StartDate:    req.StartDate,
-		EndDate:      *req.EndDate,
+		Title:       req.Title,
+		Description: req.Description,
+		CreatedBy:   req.CreatedBy,
+		AssigneeID:  req.AssigneeID,
+		Status:      "pending", // 默认状态
 	}
 	err := s.repo.Create(assignment)
 	return assignment, err
@@ -52,22 +37,24 @@ func (s *assignmentServiceImpl) GetAllAssignments() ([]model.Assignment, error) 
 	return s.repo.FindAll()
 }
 
-func (s *assignmentServiceImpl) UpdateAssignment(id uint, req UpdateAssignmentRequest) (*model.Assignment, error) {
+func (s *assignmentServiceImpl) UpdateAssignment(id uint, req dto.UpdateAssignmentRequest) (*model.Assignment, error) {
 	assignment, err := s.repo.FindByID(id)
 	if err != nil {
 		return nil, err
 	}
 
-	if req.DepartmentID != 0 {
-		assignment.DepartmentID = req.DepartmentID
+	if req.Title != nil {
+		assignment.Title = *req.Title
 	}
-	if req.PositionID != 0 {
-		assignment.PositionID = req.PositionID
+	if req.Description != nil {
+		assignment.Description = *req.Description
 	}
-	if !req.StartDate.IsZero() {
-		assignment.StartDate = req.StartDate
+	if req.Status != nil {
+		assignment.Status = *req.Status
 	}
-	assignment.EndDate = *req.EndDate // 允许将 EndDate 更新为 nil
+	if req.AssigneeID != nil {
+		assignment.AssigneeID = *req.AssigneeID
+	}
 
 	err = s.repo.Update(assignment)
 	return assignment, err
