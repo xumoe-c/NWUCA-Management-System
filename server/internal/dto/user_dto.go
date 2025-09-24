@@ -15,8 +15,7 @@ type LoginRequest struct {
 
 // UserResponse 定义了成功注册用户的响应结构
 type UserResponse struct {
-	Message string `json:"message"`
-	UserID  uint   `json:"user_id"`
+	UserID uint `json:"user_id"`
 }
 
 // LoginResponse 定义了成功登录的响应结构

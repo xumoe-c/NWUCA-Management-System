@@ -32,19 +32,30 @@ func NewUserHandler(svc service.UserService) *UserHandler {
 func (h *UserHandler) Register(c *gin.Context) {
 	var req dto.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误",
+			Data: nil,
+		})
 		return
 	}
 
 	createdUser, err := h.userService.Register(req.Username, req.Email, req.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, dto.Response{
+			Code: http.StatusInternalServerError,
+			Msg:  "服务器内部错误",
+			Data: nil,
+		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, dto.UserResponse{
-		Message: "User registered successfully",
-		UserID:  createdUser.ID,
+	c.JSON(http.StatusCreated, dto.Response{
+		Code: http.StatusCreated,
+		Msg:  "注册成功",
+		Data: dto.UserResponse{
+			UserID: createdUser.ID,
+		},
 	})
 }
 
@@ -62,15 +73,29 @@ func (h *UserHandler) Register(c *gin.Context) {
 func (h *UserHandler) Login(c *gin.Context) {
 	var req dto.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误",
+			Data: nil,
+		})
 		return
 	}
 
 	token, err := h.userService.Login(req.Email, req.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, dto.Response{
+			Code: http.StatusUnauthorized,
+			Msg:  "密码错误",
+			Data: nil,
+		})
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.LoginResponse{Token: token})
+	c.JSON(http.StatusOK, dto.Response{
+		Code: http.StatusOK,
+		Msg:  "登录成功",
+		Data: dto.LoginResponse{
+			Token: token,
+		},
+	})
 }
