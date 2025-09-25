@@ -39,7 +39,7 @@ type Member struct {
 	AvatarURL              string `gorm:"size:255"`
 	DepartmentID           uint
 	PositionID             uint
-	Assignments            []Assignment `gorm:"foreignKey:MemberID"` // 一个会员可以有多个任期分配
+	Assignments            []Assignment `gorm:"foreignKey:AssigneeID"` // 一个会员可以有多个任期分配
 }
 
 // 3. 指导老师表 (Advisors)
