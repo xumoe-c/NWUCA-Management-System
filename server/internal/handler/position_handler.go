@@ -3,6 +3,7 @@ package handler
 import (
 	"NWUCA-Management-System/server/internal/dto"
 	"NWUCA-Management-System/server/internal/service"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -41,11 +42,20 @@ func (h *PositionHandler) CreatePosition(c *gin.Context) {
 	}
 	position, err := h.service.Create(req.Name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.Response{
-			Code: http.StatusInternalServerError,
-			Msg:  "服务器内部错误",
-			Data: nil,
-		})
+		switch {
+		case errors.Is(err, service.ErrNameExists):
+			c.JSON(http.StatusConflict, dto.Response{
+				Code: http.StatusConflict,
+				Msg:  "名称被占用",
+				Data: nil,
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, dto.Response{
+				Code: http.StatusInternalServerError,
+				Msg:  "服务器内部错误",
+				Data: nil,
+			})
+		}
 		return
 	}
 	c.JSON(http.StatusCreated, dto.Response{
@@ -115,11 +125,20 @@ func (h *PositionHandler) UpdatePosition(c *gin.Context) {
 	}
 	position, err := h.service.Update(uint(id), req.Name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.Response{
-			Code: http.StatusInternalServerError,
-			Msg:  "服务器内部错误",
-			Data: nil,
-		})
+		switch {
+		case errors.Is(err, service.ErrPositionNotExists):
+			c.JSON(http.StatusNotFound, dto.Response{
+				Code: http.StatusNotFound,
+				Msg:  "未找到",
+				Data: nil,
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, dto.Response{
+				Code: http.StatusInternalServerError,
+				Msg:  "服务器内部错误",
+				Data: nil,
+			})
+		}
 		return
 	}
 	c.JSON(http.StatusOK, dto.Response{

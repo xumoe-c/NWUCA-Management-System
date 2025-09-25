@@ -9,6 +9,7 @@ import (
 type PositionRepository interface {
 	Create(position *model.Position) error
 	FindAll() ([]model.Position, error)
+	FindByName(name string) (*model.Position, error)
 	FindByID(id uint) (*model.Position, error)
 	Update(position *model.Position) error
 	Delete(id uint) error
@@ -32,10 +33,22 @@ func (r *positionGormRepository) FindAll() ([]model.Position, error) {
 	return positions, err
 }
 
+func (r *positionGormRepository) FindByName(name string) (*model.Position, error) {
+	var position model.Position
+	err := r.db.Where("name = ?", name).First(&position).Error
+	if err != nil {
+		return nil, err
+	}
+	return &position, nil
+}
+
 func (r *positionGormRepository) FindByID(id uint) (*model.Position, error) {
 	var position model.Position
-	err := r.db.First(&position, id).Error
-	return &position, err
+	err := r.db.Where("id", id).First(&position).Error
+	if err != nil {
+		return nil, err
+	}
+	return &position, nil
 }
 
 func (r *positionGormRepository) Update(position *model.Position) error {

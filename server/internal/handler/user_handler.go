@@ -3,6 +3,7 @@ package handler
 import (
 	"NWUCA-Management-System/server/internal/dto"
 	"NWUCA-Management-System/server/internal/service"
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -42,16 +43,16 @@ func (h *UserHandler) Register(c *gin.Context) {
 
 	createdUser, err := h.userService.Register(req.Username, req.Email, req.Password)
 	if err != nil {
-		switch err {
-		case service.ErrUsernameExists:
-			c.JSON(http.StatusBadRequest, dto.Response{
-				Code: http.StatusBadRequest,
+		switch {
+		case errors.Is(err, service.ErrNameExists):
+			c.JSON(http.StatusConflict, dto.Response{
+				Code: http.StatusConflict,
 				Msg:  "用户名被占用",
 				Data: nil,
 			})
-		case service.ErrEmailExists:
-			c.JSON(http.StatusBadRequest, dto.Response{
-				Code: http.StatusBadRequest,
+		case errors.Is(err, service.ErrEmailExists):
+			c.JSON(http.StatusConflict, dto.Response{
+				Code: http.StatusConflict,
 				Msg:  "邮箱被占用",
 				Data: nil,
 			})
@@ -98,8 +99,8 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	token, err := h.userService.Login(req.Email, req.Password)
 	if err != nil {
-		switch err {
-		case service.ErrInvalidCreds:
+		switch {
+		case errors.Is(err, service.ErrInvalidCreds):
 			c.JSON(http.StatusUnauthorized, dto.Response{
 				Code: http.StatusUnauthorized,
 				Msg:  "邮箱或密码错误",
