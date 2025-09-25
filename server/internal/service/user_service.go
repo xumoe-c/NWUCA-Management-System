@@ -1,10 +1,10 @@
 package service
 
 import (
+	"NWUCA-Management-System/server/internal/errors"
 	"NWUCA-Management-System/server/internal/model"
 	"NWUCA-Management-System/server/internal/repository"
 	"NWUCA-Management-System/server/internal/util/auth"
-	"errors"
 
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
@@ -23,12 +23,6 @@ type userServiceImpl struct {
 	jwtExpDays int
 }
 
-var (
-	ErrUsernameExists = errors.New("username already exists")
-	ErrEmailExists    = errors.New("email already exists")
-	ErrInvalidCreds   = errors.New("invalid email or password")
-)
-
 // NewUserService 创建一个新的 UserService 实例
 func NewUserService(userRepo repository.UserRepository, jwtSecret string, jwtExpDays int) UserService {
 	return &userServiceImpl{
@@ -43,12 +37,12 @@ func (s *userServiceImpl) Register(username, email, password string) (*model.Use
 	// 1. 检查用户是否已存在
 	_, err := s.userRepo.FindByUsername(username)
 	if err == nil {
-		return nil, ErrUsernameExists
+		return nil, apperrors.ErrUsernameExists
 	}
 
 	_, err = s.userRepo.FindByEmail(email)
 	if err == nil {
-		return nil, ErrEmailExists
+		return nil, apperrors.ErrEmailExists
 	}
 
 	// 2. 哈希密码
@@ -86,13 +80,13 @@ func (s *userServiceImpl) Login(email, password string) (string, error) {
 	// 1. 根据邮箱查找用户
 	user, err := s.userRepo.FindByEmail(email)
 	if err != nil {
-		return "", ErrInvalidCreds
+		return "", apperrors.ErrInvalidCredits
 	}
 
 	// 2. 验证密码
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
-		return "", ErrInvalidCreds
+		return "", apperrors.ErrInvalidCredits
 	}
 
 	// 3. 生成JWT

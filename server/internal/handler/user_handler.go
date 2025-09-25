@@ -2,6 +2,7 @@ package handler
 
 import (
 	"NWUCA-Management-System/server/internal/dto"
+	apperrors "NWUCA-Management-System/server/internal/errors"
 	"NWUCA-Management-System/server/internal/service"
 	"errors"
 	"net/http"
@@ -44,13 +45,13 @@ func (h *UserHandler) Register(c *gin.Context) {
 	createdUser, err := h.userService.Register(req.Username, req.Email, req.Password)
 	if err != nil {
 		switch {
-		case errors.Is(err, service.ErrNameExists):
+		case errors.Is(err, apperrors.ErrUsernameExists):
 			c.JSON(http.StatusConflict, dto.Response{
 				Code: http.StatusConflict,
 				Msg:  "用户名被占用",
 				Data: nil,
 			})
-		case errors.Is(err, service.ErrEmailExists):
+		case errors.Is(err, apperrors.ErrEmailExists):
 			c.JSON(http.StatusConflict, dto.Response{
 				Code: http.StatusConflict,
 				Msg:  "邮箱被占用",
@@ -100,7 +101,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 	token, err := h.userService.Login(req.Email, req.Password)
 	if err != nil {
 		switch {
-		case errors.Is(err, service.ErrInvalidCreds):
+		case errors.Is(err, apperrors.ErrInvalidCredits):
 			c.JSON(http.StatusUnauthorized, dto.Response{
 				Code: http.StatusUnauthorized,
 				Msg:  "邮箱或密码错误",

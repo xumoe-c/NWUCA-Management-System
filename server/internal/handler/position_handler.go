@@ -2,6 +2,7 @@ package handler
 
 import (
 	"NWUCA-Management-System/server/internal/dto"
+	"NWUCA-Management-System/server/internal/errors"
 	"NWUCA-Management-System/server/internal/service"
 	"errors"
 	"net/http"
@@ -43,7 +44,7 @@ func (h *PositionHandler) CreatePosition(c *gin.Context) {
 	position, err := h.service.Create(req.Name)
 	if err != nil {
 		switch {
-		case errors.Is(err, service.ErrNameExists):
+		case errors.Is(err, apperrors.ErrPositionNameExists):
 			c.JSON(http.StatusConflict, dto.Response{
 				Code: http.StatusConflict,
 				Msg:  "名称被占用",
@@ -126,7 +127,7 @@ func (h *PositionHandler) UpdatePosition(c *gin.Context) {
 	position, err := h.service.Update(uint(id), req.Name)
 	if err != nil {
 		switch {
-		case errors.Is(err, service.ErrPositionNotExists):
+		case errors.Is(err, apperrors.ErrNotFound):
 			c.JSON(http.StatusNotFound, dto.Response{
 				Code: http.StatusNotFound,
 				Msg:  "未找到",

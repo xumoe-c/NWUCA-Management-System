@@ -1,9 +1,9 @@
 package service
 
 import (
+	"NWUCA-Management-System/server/internal/errors"
 	"NWUCA-Management-System/server/internal/model"
 	"NWUCA-Management-System/server/internal/repository"
-	"errors"
 )
 
 type PositionService interface {
@@ -18,11 +18,6 @@ type positionServiceImpl struct {
 	repo repository.PositionRepository
 }
 
-var (
-	ErrNameExists        = errors.New("name already exists")
-	ErrPositionNotExists = errors.New("position does not exists")
-)
-
 func NewPositionService(repo repository.PositionRepository) PositionService {
 	return &positionServiceImpl{repo: repo}
 }
@@ -31,7 +26,7 @@ func (s *positionServiceImpl) Create(name string) (*model.Position, error) {
 	// 1. 检查name是否存在
 	_, err := s.repo.FindByName(name)
 	if err == nil {
-		return nil, ErrNameExists
+		return nil, apperrors.ErrPositionNameExists
 	}
 
 	// 2. 创建position
@@ -54,7 +49,7 @@ func (s *positionServiceImpl) GetByID(id uint) (*model.Position, error) {
 func (s *positionServiceImpl) Update(id uint, name string) (*model.Position, error) {
 	position, err := s.repo.FindByID(id)
 	if err != nil {
-		return nil, ErrPositionNotExists
+		return nil, apperrors.ErrNotFound
 	}
 
 	position.Name = name
