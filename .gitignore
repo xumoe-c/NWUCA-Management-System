@@ -16,6 +16,7 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+client_demo/node_modules/
 
 # Go workspace file
 go.work
@@ -23,3 +24,5 @@ go.work.sum
 
 # env file
 .env
+
+
