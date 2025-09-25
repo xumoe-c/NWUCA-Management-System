@@ -42,11 +42,26 @@ func (h *UserHandler) Register(c *gin.Context) {
 
 	createdUser, err := h.userService.Register(req.Username, req.Email, req.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, dto.Response{
-			Code: http.StatusInternalServerError,
-			Msg:  "服务器内部错误",
-			Data: nil,
-		})
+		switch err {
+		case service.ErrUsernameExists:
+			c.JSON(http.StatusBadRequest, dto.Response{
+				Code: http.StatusBadRequest,
+				Msg:  "用户名被占用",
+				Data: nil,
+			})
+		case service.ErrEmailExists:
+			c.JSON(http.StatusBadRequest, dto.Response{
+				Code: http.StatusBadRequest,
+				Msg:  "邮箱被占用",
+				Data: nil,
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, dto.Response{
+				Code: http.StatusInternalServerError,
+				Msg:  "服务器内部错误",
+				Data: nil,
+			})
+		}
 		return
 	}
 
@@ -83,11 +98,20 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	token, err := h.userService.Login(req.Email, req.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, dto.Response{
-			Code: http.StatusUnauthorized,
-			Msg:  "密码错误",
-			Data: nil,
-		})
+		switch err {
+		case service.ErrInvalidCreds:
+			c.JSON(http.StatusUnauthorized, dto.Response{
+				Code: http.StatusUnauthorized,
+				Msg:  "邮箱或密码错误",
+				Data: nil,
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, dto.Response{
+				Code: http.StatusInternalServerError,
+				Msg:  "服务器内部错误",
+				Data: nil,
+			})
+		}
 		return
 	}
 

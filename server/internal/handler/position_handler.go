@@ -32,15 +32,27 @@ func NewPositionHandler(service service.PositionService) *PositionHandler {
 func (h *PositionHandler) CreatePosition(c *gin.Context) {
 	var req dto.CreatePositionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误",
+			Data: nil,
+		})
 		return
 	}
 	position, err := h.service.Create(req.Name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create position"})
+		c.JSON(http.StatusInternalServerError, dto.Response{
+			Code: http.StatusInternalServerError,
+			Msg:  "服务器内部错误",
+			Data: nil,
+		})
 		return
 	}
-	c.JSON(http.StatusCreated, position)
+	c.JSON(http.StatusCreated, dto.Response{
+		Code: http.StatusCreated,
+		Msg:  "创建成功",
+		Data: position,
+	})
 }
 
 // GetPositions
@@ -55,10 +67,18 @@ func (h *PositionHandler) CreatePosition(c *gin.Context) {
 func (h *PositionHandler) GetPositions(c *gin.Context) {
 	positions, err := h.service.GetAll()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get positions"})
+		c.JSON(http.StatusInternalServerError, dto.Response{
+			Code: http.StatusInternalServerError,
+			Msg:  "服务器内部错误",
+			Data: nil,
+		})
 		return
 	}
-	c.JSON(http.StatusOK, positions)
+	c.JSON(http.StatusOK, dto.Response{
+		Code: http.StatusOK,
+		Msg:  "获取成功",
+		Data: positions,
+	})
 }
 
 // UpdatePosition
@@ -77,20 +97,36 @@ func (h *PositionHandler) GetPositions(c *gin.Context) {
 func (h *PositionHandler) UpdatePosition(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid position ID"})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误: 非法的id",
+			Data: nil,
+		})
 		return
 	}
 	var req dto.UpdatePositionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误",
+			Data: nil,
+		})
 		return
 	}
 	position, err := h.service.Update(uint(id), req.Name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update position"})
+		c.JSON(http.StatusInternalServerError, dto.Response{
+			Code: http.StatusInternalServerError,
+			Msg:  "服务器内部错误",
+			Data: nil,
+		})
 		return
 	}
-	c.JSON(http.StatusOK, position)
+	c.JSON(http.StatusOK, dto.Response{
+		Code: http.StatusOK,
+		Msg:  "修改成功",
+		Data: position,
+	})
 }
 
 // DeletePosition
@@ -107,12 +143,24 @@ func (h *PositionHandler) UpdatePosition(c *gin.Context) {
 func (h *PositionHandler) DeletePosition(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid position ID"})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误: 非法的id",
+			Data: nil,
+		})
 		return
 	}
 	if err := h.service.Delete(uint(id)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete position"})
+		c.JSON(http.StatusInternalServerError, dto.Response{
+			Code: http.StatusInternalServerError,
+			Msg:  "服务器内部错误",
+			Data: nil,
+		})
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusOK, dto.Response{
+		Code: http.StatusOK,
+		Msg:  "删除成功",
+		Data: nil,
+	})
 }
