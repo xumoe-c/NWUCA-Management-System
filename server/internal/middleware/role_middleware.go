@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"NWUCA-Management-System/server/internal/dto"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,20 +12,32 @@ func RoleAuthMiddleware(requiredRole string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userRole, exists := c.Get("userRole")
 		if !exists {
-			c.JSON(http.StatusForbidden, gin.H{"error": "User role not found in context"})
+			c.JSON(http.StatusForbidden, dto.Response{
+				Code: http.StatusForbidden,
+				Msg:  "用户角色不存在",
+				Data: nil,
+			})
 			c.Abort()
 			return
 		}
 
 		role, ok := userRole.(string)
 		if !ok {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid role type in context"})
+			c.JSON(http.StatusInternalServerError, dto.Response{
+				Code: http.StatusInternalServerError,
+				Msg:  "服务器内部错误",
+				Data: nil,
+			})
 			c.Abort()
 			return
 		}
 
 		if role != requiredRole {
-			c.JSON(http.StatusForbidden, gin.H{"error": "Permission denied"})
+			c.JSON(http.StatusForbidden, dto.Response{
+				Code: http.StatusForbidden,
+				Msg:  "权限不足",
+				Data: nil,
+			})
 			c.Abort()
 			return
 		}
