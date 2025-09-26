@@ -25,4 +25,31 @@ go.work.sum
 # env file
 .env
 
+# --- uni-app / H5 front-end (client) ---
+# Node dependencies
+client/node_modules/
+
+# Build outputs & cache
+client/unpackage/
+client/dist/
+client/.cache/
+client/.sourcemap/
+client/.temp/
+
+# HBuilderX workspace
+client/.hbuilderx/
+
+# IDE/editor configs
+client/.vscode/
+client/.idea/
+
+# Logs & local env
+client/**/*.log
+client/.env.local
+client/.env.*.local
+
+# OS junk files
+client/.DS_Store
+client/Thumbs.db
+
 
