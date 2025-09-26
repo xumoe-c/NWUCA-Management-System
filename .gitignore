@@ -39,6 +39,9 @@ client/.temp/
 # HBuilderX workspace
 client/.hbuilderx/
 
+# Uniapp modules
+client/uni_modules
+
 # IDE/editor configs
 client/.vscode/
 client/.idea/
