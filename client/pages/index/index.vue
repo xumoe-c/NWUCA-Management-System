@@ -8,14 +8,19 @@
 </template>
 
 <script>
+  import { isLoggedIn } from '../../store/auth'
 	export default {
 		data() {
 			return {
 				title: 'Hello'
 			}
 		},
-		onLoad() {
-
+		onShow() {
+			if (!isLoggedIn()) {
+				uni.reLaunch({ url: '/pages/login/index' })
+			} else {
+				uni.reLaunch({ url: '/pages/dashboard/index' })
+			}
 		},
 		methods: {
 

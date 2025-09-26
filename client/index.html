@@ -9,7 +9,11 @@
         '<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' +
         (coverSupport ? ', viewport-fit=cover' : '') + '" />')
     </script>
-    <title></title>
+    <title>NWUCA 管理系统</title>
+    <script>
+      // 可在部署时通过 window.__API_BASE__ 指定后端地址
+      window.__API_BASE__ = window.__API_BASE__ || ''
+    </script>
     <!--preload-links-->
     <!--app-context-->
   </head>

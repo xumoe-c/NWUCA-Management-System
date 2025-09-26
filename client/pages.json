@@ -1,17 +1,28 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
-		}
+	"pages": [
+		{ "path": "pages/login/index", "style": { "navigationBarTitleText": "登录" } },
+		{ "path": "pages/dashboard/index", "style": { "navigationBarTitleText": "仪表盘" } },
+		{ "path": "pages/departments/index", "style": { "navigationBarTitleText": "部门管理" } },
+		{ "path": "pages/positions/index", "style": { "navigationBarTitleText": "职务管理" } },
+		{ "path": "pages/members/index", "style": { "navigationBarTitleText": "成员管理" } },
+		{ "path": "pages/assignments/index", "style": { "navigationBarTitleText": "任期分配" } },
+		{ "path": "pages/profile/index", "style": { "navigationBarTitleText": "个人中心" } },
+		{ "path": "pages/index/index", "style": { "navigationBarTitleText": "首页" } }
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
+		"navigationBarTitleText": "NWUCA",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#666",
+		"selectedColor": "#2A82E4",
+		"borderStyle": "black",
+		"list": [
+			{ "pagePath": "pages/dashboard/index", "text": "首页" },
+			{ "pagePath": "pages/profile/index", "text": "我的" }
+		]
 	},
 	"uniIdRouter": {}
 }
