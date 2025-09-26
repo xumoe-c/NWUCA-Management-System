@@ -24,5 +24,11 @@
 			{ "pagePath": "pages/profile/index", "text": "我的" }
 		]
 	},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^t-(.*)": "@/uni_modules/tdesign-ui/components/$1/index.vue"
+		}
+	},
 	"uniIdRouter": {}
 }

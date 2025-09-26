@@ -1,0 +1,14 @@
+{
+  "name": "nwucca-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NWUCA Management System uni-app client",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "echo lodash-es installed",
+    "info": "node -e \"console.log('NWUCA client workspace ready')\""
+  },
+  "dependencies": {
+    "lodash-es": "^4.17.21"
+  }
+}
