@@ -2,11 +2,11 @@ package service
 
 import (
 	"NWUCA-Management-System/server/internal/dto"
+	apperrors "NWUCA-Management-System/server/internal/errors"
 	"NWUCA-Management-System/server/internal/model"
 	"NWUCA-Management-System/server/internal/repository"
 	"errors"
 
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -39,39 +39,46 @@ func (s *memberServiceImpl) CreateMember(req dto.CreateMemberRequest) (*model.Me
 	}
 
 	// 检查邮箱是否已存在
-	_, err := s.userRepo.FindByEmail(req.Email)
-	if err == nil {
-		tx.Rollback()
-		return nil, errors.New("email already exists")
+	var user model.User
+	err := tx.Where("email = ?", req.Email).First(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			tx.Rollback()
+			return nil, apperrors.ErrNotFound
+		}
+		return nil, err
 	}
 
 	// 创建 User
 	// 注意：在实际生产中，密码应该由前端传递，这里为了简化，暂时设为默认值
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("default_password"), bcrypt.DefaultCost)
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-	user := &model.User{
-		Username:     req.Name, // 暂时使用成员姓名作为用户名
-		Email:        req.Email,
-		PasswordHash: string(hashedPassword),
-		Role:         "member", // 新创建的会员默认为 'member' 角色
-	}
-	if err := tx.Create(user).Error; err != nil {
-		tx.Rollback()
-		return nil, err
-	}
+	/*
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte("default_password"), bcrypt.DefaultCost)
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
+		user := &model.User{
+			Username:     req.Name, // 暂时使用成员姓名作为用户名
+			Email:        req.Email,
+			PasswordHash: string(hashedPassword),
+			Role:         "member", // 新创建的会员默认为 'member' 角色
+		}
+		if err := tx.Create(user).Error; err != nil {
+			tx.Rollback()
+			return nil, err
+		}
+	*/
 
 	// 创建 Member
 	member := &model.Member{
 		UserID:       user.ID,
+		User:         user,
 		Name:         req.Name,
+		PhoneNumber:  req.PhoneNumber,
+		Email:        req.Email,
 		JoinDate:     req.JoinDate,
 		DepartmentID: req.DepartmentID,
 		PositionID:   req.PositionID,
-		Email:        req.Email,
-		PhoneNumber:  req.PhoneNumber,
 	}
 	if err := tx.Create(member).Error; err != nil {
 		tx.Rollback()
@@ -88,7 +95,10 @@ func (s *memberServiceImpl) GetAllMembers() ([]model.Member, error) {
 func (s *memberServiceImpl) UpdateMember(id uint, req dto.UpdateMemberRequest) (*model.Member, error) {
 	member, err := s.memberRepo.FindByID(id)
 	if err != nil {
-		return nil, errors.New("member not found")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, apperrors.ErrNotFound
+		}
+		return nil, err
 	}
 
 	// 更新 Member 表信息
@@ -125,10 +135,14 @@ func (s *memberServiceImpl) DeleteMember(id uint) error {
 		return tx.Error
 	}
 
-	member, err := s.memberRepo.FindByID(id)
+	var member model.Member
+	err := tx.Where("id = ?", id).First(&member).Error
 	if err != nil {
 		tx.Rollback()
-		return errors.New("member not found")
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return apperrors.ErrNotFound
+		}
+		return err
 	}
 
 	// 删除 member

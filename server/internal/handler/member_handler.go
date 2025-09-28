@@ -2,7 +2,9 @@ package handler
 
 import (
 	"NWUCA-Management-System/server/internal/dto"
+	apperrors "NWUCA-Management-System/server/internal/errors"
 	"NWUCA-Management-System/server/internal/service"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -32,16 +34,37 @@ func NewMemberHandler(service service.MemberService) *MemberHandler {
 func (h *MemberHandler) CreateMember(c *gin.Context) {
 	var req dto.CreateMemberRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误",
+			Data: nil,
+		})
 		return
 	}
 	// The service layer might need to be adapted to take the DTO
 	member, err := h.service.CreateMember(req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		switch {
+		case errors.Is(err, apperrors.ErrNotFound):
+			c.JSON(http.StatusNotFound, dto.Response{
+				Code: http.StatusNotFound,
+				Msg:  "用户邮箱不存在",
+				Data: nil,
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, dto.Response{
+				Code: http.StatusInternalServerError,
+				Msg:  "服务器内部错误",
+				Data: nil,
+			})
+		}
 		return
 	}
-	c.JSON(http.StatusCreated, member)
+	c.JSON(http.StatusCreated, dto.Response{
+		Code: http.StatusCreated,
+		Msg:  "创建成功",
+		Data: member,
+	})
 }
 
 // GetMembers
@@ -56,10 +79,18 @@ func (h *MemberHandler) CreateMember(c *gin.Context) {
 func (h *MemberHandler) GetMembers(c *gin.Context) {
 	members, err := h.service.GetAllMembers()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get members"})
+		c.JSON(http.StatusInternalServerError, dto.Response{
+			Code: http.StatusInternalServerError,
+			Msg:  "服务器内部错误",
+			Data: nil,
+		})
 		return
 	}
-	c.JSON(http.StatusOK, members)
+	c.JSON(http.StatusOK, dto.Response{
+		Code: http.StatusOK,
+		Msg:  "获取成功",
+		Data: members,
+	})
 }
 
 // UpdateMember
@@ -78,21 +109,46 @@ func (h *MemberHandler) GetMembers(c *gin.Context) {
 func (h *MemberHandler) UpdateMember(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid member ID"})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误: 非法的id",
+			Data: nil,
+		})
 		return
 	}
 	var req dto.UpdateMemberRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误",
+			Data: nil,
+		})
 		return
 	}
 	// The service layer might need to be adapted to take the DTO
 	member, err := h.service.UpdateMember(uint(id), req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		switch {
+		case errors.Is(err, apperrors.ErrNotFound):
+			c.JSON(http.StatusNotFound, dto.Response{
+				Code: http.StatusNotFound,
+				Msg:  "会员不存在",
+				Data: nil,
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, dto.Response{
+				Code: http.StatusInternalServerError,
+				Msg:  "服务器内部错误",
+				Data: nil,
+			})
+		}
 		return
 	}
-	c.JSON(http.StatusOK, member)
+	c.JSON(http.StatusOK, dto.Response{
+		Code: http.StatusOK,
+		Msg:  "更新成功",
+		Data: member,
+	})
 }
 
 // DeleteMember
@@ -109,12 +165,33 @@ func (h *MemberHandler) UpdateMember(c *gin.Context) {
 func (h *MemberHandler) DeleteMember(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid member ID"})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误: 非法的id",
+			Data: nil,
+		})
 		return
 	}
 	if err := h.service.DeleteMember(uint(id)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		switch {
+		case errors.Is(err, apperrors.ErrNotFound):
+			c.JSON(http.StatusNotFound, dto.Response{
+				Code: http.StatusNotFound,
+				Msg:  "会员不存在",
+				Data: nil,
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, dto.Response{
+				Code: http.StatusInternalServerError,
+				Msg:  "服务器内部错误",
+				Data: nil,
+			})
+		}
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusOK, dto.Response{
+		Code: http.StatusOK,
+		Msg:  "删除成功",
+		Data: nil,
+	})
 }
