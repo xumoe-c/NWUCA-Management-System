@@ -5,9 +5,11 @@ import (
 	"NWUCA-Management-System/server/internal/model"
 	"NWUCA-Management-System/server/internal/repository"
 	"NWUCA-Management-System/server/internal/util/auth"
+	"errors"
 
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 // UserService 接口定义了用户服务
@@ -36,12 +38,20 @@ func NewUserService(userRepo repository.UserRepository, jwtSecret string, jwtExp
 func (s *userServiceImpl) Register(username, email, password string) (*model.User, error) {
 	// 1. 检查用户是否已存在
 	_, err := s.userRepo.FindByUsername(username)
-	if err == nil {
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, err
+		}
+	} else {
 		return nil, apperrors.ErrUsernameExists
 	}
 
 	_, err = s.userRepo.FindByEmail(email)
-	if err == nil {
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, err
+		}
+	} else {
 		return nil, apperrors.ErrEmailExists
 	}
 
