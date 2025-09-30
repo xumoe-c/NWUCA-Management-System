@@ -4,6 +4,7 @@ import (
 	"NWUCA-Management-System/server/config"
 	"NWUCA-Management-System/server/internal/handler"
 	"NWUCA-Management-System/server/internal/middleware"
+	"NWUCA-Management-System/server/internal/model"
 	"NWUCA-Management-System/server/internal/repository"
 	"NWUCA-Management-System/server/internal/service"
 	"log"
@@ -44,6 +45,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not init database: %v", err)
 	}
+
+	err = db.AutoMigrate(&model.User{}, &model.Member{}, &model.Department{}, &model.Assignment{}, &model.Advisor{}, &model.Position{})
 
 	// 3. 依赖注入：从内到外创建实例
 	// Repository -> Service -> Handler
@@ -133,5 +136,5 @@ func main() {
 	if cfg.Server.Port == "" {
 		cfg.Server.Port = ":8080" // 默认端口
 	}
-	r.Run(cfg.Server.Port)
+	err = r.Run(cfg.Server.Port)
 }

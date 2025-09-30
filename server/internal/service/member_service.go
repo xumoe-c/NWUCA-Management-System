@@ -40,6 +40,7 @@ func (s *memberServiceImpl) CreateMember(req dto.CreateMemberRequest) (*model.Me
 
 	// 检查邮箱是否已存在
 	var user model.User
+	// 使用事务要手动查找，不能使用db
 	err := tx.Where("email = ?", req.Email).First(&user).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -136,6 +137,7 @@ func (s *memberServiceImpl) DeleteMember(id uint) error {
 	}
 
 	var member model.Member
+	// 使用事务要手动查找，不能使用db
 	err := tx.Where("id = ?", id).First(&member).Error
 	if err != nil {
 		tx.Rollback()
