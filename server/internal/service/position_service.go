@@ -4,6 +4,9 @@ import (
 	"NWUCA-Management-System/server/internal/errors"
 	"NWUCA-Management-System/server/internal/model"
 	"NWUCA-Management-System/server/internal/repository"
+	"errors"
+
+	"gorm.io/gorm"
 )
 
 type PositionService interface {
@@ -25,7 +28,11 @@ func NewPositionService(repo repository.PositionRepository) PositionService {
 func (s *positionServiceImpl) Create(name string) (*model.Position, error) {
 	// 1. 检查name是否存在
 	_, err := s.repo.FindByName(name)
-	if err == nil {
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, err
+		}
+	} else {
 		return nil, apperrors.ErrPositionNameExists
 	}
 
@@ -49,12 +56,16 @@ func (s *positionServiceImpl) GetByID(id uint) (*model.Position, error) {
 func (s *positionServiceImpl) Update(id uint, name string) (*model.Position, error) {
 	position, err := s.repo.FindByID(id)
 	if err != nil {
-		return nil, apperrors.ErrNotFound
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, apperrors.ErrNotFound
+		} else {
+			return nil, err
+		}
 	}
 
 	position.Name = name
 	err = s.repo.Update(position)
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 	return position, nil
