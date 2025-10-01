@@ -7,5 +7,6 @@ var (
 	ErrEmailExists        = errors.New("email already exists")
 	ErrInvalidCredits     = errors.New("invalid email or password")
 	ErrPositionNameExists = errors.New("position name already exists")
+	ErrDepartmentExists   = errors.New("department already exists")
 	ErrNotFound           = errors.New("not found")
 )

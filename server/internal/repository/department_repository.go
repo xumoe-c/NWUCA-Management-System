@@ -9,6 +9,7 @@ import (
 type DepartmentRepository interface {
 	Create(department *model.Department) error
 	FindAll() ([]model.Department, error)
+	FindByName(name string) (*model.Department, error)
 	FindByID(id uint) (*model.Department, error)
 	Update(department *model.Department) error
 	Delete(id uint) error
@@ -30,6 +31,12 @@ func (r *departmentGormRepository) FindAll() ([]model.Department, error) {
 	var departments []model.Department
 	err := r.db.Find(&departments).Error
 	return departments, err
+}
+
+func (r *departmentGormRepository) FindByName(name string) (*model.Department, error) {
+	var department model.Department
+	err := r.db.Where("name = ?", name).First(&department).Error
+	return &department, err
 }
 
 func (r *departmentGormRepository) FindByID(id uint) (*model.Department, error) {

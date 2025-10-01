@@ -2,7 +2,9 @@ package handler
 
 import (
 	"NWUCA-Management-System/server/internal/dto"
+	apperrors "NWUCA-Management-System/server/internal/errors"
 	"NWUCA-Management-System/server/internal/service"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -32,15 +34,36 @@ func NewDepartmentHandler(service service.DepartmentService) *DepartmentHandler 
 func (h *DepartmentHandler) CreateDepartment(c *gin.Context) {
 	var req dto.CreateDepartmentRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误",
+			Data: nil,
+		})
 		return
 	}
 	department, err := h.service.Create(req.Name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create department"})
+		switch {
+		case errors.Is(err, apperrors.ErrDepartmentExists):
+			c.JSON(http.StatusConflict, dto.Response{
+				Code: http.StatusConflict,
+				Msg:  "名称被占用",
+				Data: nil,
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, dto.Response{
+				Code: http.StatusInternalServerError,
+				Msg:  "服务器内部错误",
+				Data: nil,
+			})
+		}
 		return
 	}
-	c.JSON(http.StatusCreated, department)
+	c.JSON(http.StatusCreated, dto.Response{
+		Code: http.StatusCreated,
+		Msg:  "创建成功",
+		Data: department,
+	})
 }
 
 // GetDepartments
@@ -55,10 +78,18 @@ func (h *DepartmentHandler) CreateDepartment(c *gin.Context) {
 func (h *DepartmentHandler) GetDepartments(c *gin.Context) {
 	departments, err := h.service.GetAll()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get departments"})
+		c.JSON(http.StatusInternalServerError, dto.Response{
+			Code: http.StatusInternalServerError,
+			Msg:  "服务器内部错误",
+			Data: nil,
+		})
 		return
 	}
-	c.JSON(http.StatusOK, departments)
+	c.JSON(http.StatusOK, dto.Response{
+		Code: http.StatusOK,
+		Msg:  "获取成功",
+		Data: departments,
+	})
 }
 
 // UpdateDepartment
@@ -77,20 +108,45 @@ func (h *DepartmentHandler) GetDepartments(c *gin.Context) {
 func (h *DepartmentHandler) UpdateDepartment(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid department ID"})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误: 非法的id",
+			Data: nil,
+		})
 		return
 	}
 	var req dto.UpdateDepartmentRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误",
+			Data: nil,
+		})
 		return
 	}
 	department, err := h.service.Update(uint(id), req.Name)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update department"})
+		switch {
+		case errors.Is(err, apperrors.ErrNotFound):
+			c.JSON(http.StatusNotFound, dto.Response{
+				Code: http.StatusNotFound,
+				Msg:  "没找到",
+				Data: nil,
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, dto.Response{
+				Code: http.StatusInternalServerError,
+				Msg:  "服务器内部错误",
+				Data: nil,
+			})
+		}
 		return
 	}
-	c.JSON(http.StatusOK, department)
+	c.JSON(http.StatusOK, dto.Response{
+		Code: http.StatusOK,
+		Msg:  "更新成功",
+		Data: department,
+	})
 }
 
 // DeleteDepartment
@@ -107,12 +163,24 @@ func (h *DepartmentHandler) UpdateDepartment(c *gin.Context) {
 func (h *DepartmentHandler) DeleteDepartment(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid department ID"})
+		c.JSON(http.StatusBadRequest, dto.Response{
+			Code: http.StatusBadRequest,
+			Msg:  "参数错误: 非法的id",
+			Data: nil,
+		})
 		return
 	}
 	if err := h.service.Delete(uint(id)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete department"})
+		c.JSON(http.StatusInternalServerError, dto.Response{
+			Code: http.StatusInternalServerError,
+			Msg:  "服务器内部错误",
+			Data: nil,
+		})
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusOK, dto.Response{
+		Code: http.StatusOK,
+		Msg:  "删除成功",
+		Data: nil,
+	})
 }
